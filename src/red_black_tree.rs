@@ -763,22 +763,22 @@ where
                         if node.color == Color::Red {
                             // Cannot use with sbf. Enable when debugging
                             // locally without sbf.
-                            #[cfg(colored)]
+                            #[cfg(feature = "colored")]
                             {
                                 use colored::Colorize;
                                 row_str += &format!("{}", str.red());
                             }
-                            #[cfg(not(colored))]
+                            #[cfg(not(feature = "colored"))]
                             {
                                 row_str += str;
                             }
                         } else {
-                            #[cfg(colored)]
+                            #[cfg(feature = "colored")]
                             {
                                 use colored::Colorize;
                                 row_str += &format!("{}", str.black());
                             }
-                            #[cfg(not(colored))]
+                            #[cfg(not(feature = "colored"))]
                             {
                                 row_str += str;
                             }
@@ -821,12 +821,12 @@ where
             if node.color == Color::Red {
                 // Cannot use with sbf. Enable when debugging
                 // locally without sbf.
-                #[cfg(colored)]
+                #[cfg(feature = "colored")]
                 {
                     use colored::Colorize;
                     row_str += &format!("{}", str.red());
                 }
-                #[cfg(not(colored))]
+                #[cfg(not(feature = "colored"))]
                 {
                     row_str += str;
                 }
@@ -857,12 +857,10 @@ where
             }
 
             if !self.has_left::<V>(index) || !self.has_right::<V>(index) {
-                match num_black {
-                    Some(num_black) => {
-                        assert_eq!(num_black, self.num_black_nodes_through_root::<V>(index))
-                    }
-                    #[allow(unused_assignments)] // the compiler has issues with "match"
-                    None => num_black = Some(self.num_black_nodes_through_root::<V>(index)),
+                if let Some(expected) = num_black {
+                    assert_eq!(expected, self.num_black_nodes_through_root::<V>(index));
+                } else {
+                    num_black = Some(self.num_black_nodes_through_root::<V>(index));
                 }
             }
         }
@@ -1579,7 +1577,7 @@ pub(crate) mod test {
         tree.insert(TEST_BLOCK_WIDTH * 7, TestOrderBid::new(6000));
     }
 
-    fn init_simple_tree(data: &mut [u8]) -> RedBlackTree<TestOrderBid> {
+    fn init_simple_tree(data: &mut [u8]) -> RedBlackTree<'_, TestOrderBid> {
         let mut tree: RedBlackTree<TestOrderBid> = RedBlackTree::new(data, NIL, NIL);
 
         for i in 1..12 {

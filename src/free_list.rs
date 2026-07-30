@@ -75,20 +75,14 @@ impl<'a, T: Pod> FreeList<'a, T> {
     }
 }
 
+#[cfg(test)]
 mod test {
-    use super::*;
-
-    #[allow(unused)]
-    #[repr(C, packed)]
-    #[derive(Default, Copy, Clone, Pod, Zeroable)]
-    struct UnusedFreeListPadding1 {
-        _padding: [u8; 1],
-    }
+    use super::{FreeList, END};
 
     #[test]
     fn test_free_list_basic() {
         let mut data: [u8; 100000] = [0; 100000];
-        let mut free_list: FreeList<UnusedFreeListPadding1> = FreeList::new(&mut data, END);
+        let mut free_list: FreeList<[u8; 1]> = FreeList::new(&mut data, END);
         free_list.add(64);
         free_list.add(128);
 

@@ -459,7 +459,7 @@ mod test {
         tree.insert(TEST_BLOCK_WIDTH * 7, TestOrderBid::new(800));
     }
 
-    fn init_simple_tree(data: &mut [u8]) -> LLRB<TestOrderBid> {
+    fn init_simple_tree(data: &mut [u8]) -> LLRB<'_, TestOrderBid> {
         let mut tree: LLRB<TestOrderBid> = LLRB::new(data, NIL, NIL);
 
         for i in 1..12 {
